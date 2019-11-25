@@ -26,6 +26,28 @@ var ncmbController = {
         .catch(function(err){
              console.log(err);
          });
+
+  Score.greaterThan("score", score)
+    .count()    // 件数を結果に含める
+    .fetchAll()
+    .then(function(scores){
+        // countの結果は、取得データscoresのcountプロパティに含まれる
+
+        // 0件のとき正しく動作するように条件分岐
+        var rank = (scores.count !== undefined) ? parseInt(scores.count) + 1 : 1;
+
+        // ダイアログの表示
+        if(typeof navigator.notification !== 'undefined'){
+            navigator.notification.alert(
+                "今回の順位は #" + rank + " でした！",
+                function(){},
+                "スコア送信完了！"
+                );
+        } else {
+            alert("スコア送信完了！\n今回の順位は #" + rank + " でした！");
+        }
+    })
+
   },
 
   //初期化
