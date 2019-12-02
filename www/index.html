@@ -11,7 +11,16 @@
     <script src="js/main.js"></script> 
     <script src ="keys.js"></script>
     <script src="js/ncmbController.js"></script>
+    <script type="text/javascript" src="js/jquery.js"></script>
 </head>
 <body>
+  <div id="mask" class="mask"></div>
+  <div id="userEditWrapper" class="userEditWrapper">
+    <form id="userEdit">
+    <label for="name">プレイヤー名</label><br />
+    <input type="text" id="name" value="" class="text-input" /><br />
+    <input type="button" id="submit" class="button" value="送信" />
+    </form>
+  </div>
 </body>
 </html>

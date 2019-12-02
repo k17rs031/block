@@ -21,32 +21,32 @@ var ncmbController = {
       // [3]送信処理
      scoreData.save()
           .then(function (saved) {
-             alert("スコア送信完了！");
+             // 順位を求める
+// ”score” フィールドの値が score より大きいものを取得
+Score.greaterThan("score", score)
+    .count()    // 件数を結果に含める
+    .fetchAll()
+    .then(function(scores){
+        // countの結果は、取得データscoresのcountプロパティに含まれる
+
+        // 0件のとき正しく動作するように条件分岐
+        var rank = (scores.count !== undefined) ? parseInt(scores.count) + 1 : 1;
+
+        // ダイアログの表示
+        if(typeof navigator.notification !== 'undefined'){
+            navigator.notification.alert(
+                "今回の順位は #" + rank + " でした！",
+                function(){},
+                "スコア送信完了！"
+                );
+        } else {
+            alert("スコア送信完了！\n今回の順位は #" + rank + " でした！");
+        }
+    })
          })
         .catch(function(err){
              console.log(err);
          });
-
-     Score.greaterThan("score", score)
-        .count()    // 件数を結果に含める
-        .fetchAll()
-        .then(function(scores){
-           // countの結果は、取得データscoresのcountプロパティに含まれる
-
-            // 0件のとき正しく動作するように条件分岐
-           var rank = (scores.count !== undefined) ? parseInt(scores.count) + 1 : 1;
-
-            // ダイアログの表示
-           if(typeof navigator.notification !== 'undefined'){
-                navigator.notification.alert(
-                    "今回の順位は #" + rank + " でした！",
-                    function(){},
-                    "スコア送信完了！"
-                    );
-            } else {
-               alert("スコア送信完了！\n今回の順位は #" + rank + " でした！");
-            }
-        })
 
   },
 
@@ -74,19 +74,29 @@ createUser: function() {
         });
     },
 
-    uuid: function() {
-      var uuid = "", i, random;
-      for (i = 0; i < 32; i++) {
-        random = Math.random() * 16 | 0;
-        if (i == 8 || i == 12 || i == 16 || i == 20) {
-          uuid += "-"
-        }
-        uuid += (i == 12 ? 4 :
-          (i == 16 ? (random & 3 | 8) :
-            random)).toString(16);
-      }
-      return uuid;
-    },
+    // ユーザー名登録フォームの表示
+showDisplayNameDialog: function() {
+    var self = this;
+
+    $("#mask").show();
+    // ダイアログを左右中央に表示する
+    $("#userEditWrapper").css("top", self.screenSize.height / 2 - 100);
+    $("#userEditWrapper").css("left", self.screenSize.width * 0.1);
+    $("#userEditWrapper").show();
+},
+
+// ユーザー名登録
+updateDisplayName: function(){
+    $("#userEditWrapper").hide();
+    $("#mask").hide();
+
+    // 入力した名前をカレントユーザーにセット
+    var name = $("#name").val();
+    this.currentUser.set("displayName", name);
+
+    // 会員情報の更新
+    return this.currentUser.update();
+},
 
   //初期化
   init: function(screenSize){
